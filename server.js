@@ -11,5 +11,5 @@ app.get("/", (req,res) => {
 	});
 
 app.get("/add", (req,res) => {  
-    res.sendFile(__dirname + '/add.html'); 
+    res.sendFile(__dirname + 'naramarket/add.html'); 
     });
