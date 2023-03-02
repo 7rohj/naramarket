@@ -10,6 +10,6 @@ app.get("/", (req,res) => {
 	res.sendFile(__dirname + '/index.html'); 
 	});
 
-app.get("/add", (req,res) => {  
-    res.sendFile(__dirname + '/naramarket/add.html'); 
+app.post("/add", (req,res) => {  
+    res.sendFile(__dirname + '/add.html'); 
     });
