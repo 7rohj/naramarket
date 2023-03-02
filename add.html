@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script type="text/javascript"></script>
+    <title>나라장터</title>
+
+    <style>
+        .display-flex {
+        display: flex;
+        justify-content: center;
+        text-align:center;
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <div style="margin-bottom:75px;"></div>
+    <center>
+    <h2>나라장터 지역제한 먼저 보기</h2>
+    <div style="margin-bottom:75px;"></div>
+    </center>
+    <script>
+        function changeFn(){
+            var value  = document.getElementById("str").value;
+            var value2  = document.getElementById("end").value;
+
+            const arr = value.split("");
+            var datecustom = arr[0] + arr[1] + arr[2] + arr[3] + arr[5] +
+            arr[6] + arr[8] + arr[9] + arr[1] + arr[1] + arr[1] + arr[1];
+
+            const arr2 = value2.split("");
+            var datecustom2 = arr2[0] + arr2[1] + arr2[2] + arr2[3] + arr2[5] +
+            arr2[6] + arr2[8] + arr2[9] + arr[1] + arr[1] + arr[1] + arr[1];
+
+            alert(value + ' , ' + value2);
+
+            // 데이터 넘겨주기
+            // 그냥 input number 해도 되지만 사용자 편의성때문에 form 을 달력형태로 바꿈
+            localStorage.setItem('value',datecustom);
+            var resultDiv2 = document.getElementById('result');                   
+                
+            localStorage.setItem('value2',datecustom2);
+            var resultDiv2 = document.getElementById('result2');
+
+            localStorage.setItem('value3',n);
+            var resultDiv2 = document.getElementById('result3');
+        };
+    </script>
+
+    
+    <form action="/add" method="post"> <!--/write "datetime-local"-->
+        <div class="display-flex">
+        입찰공고일시범위 시작 : <input type="date" name="str" id="str">
+        <div style="margin-right:15px;"></div>
+        입찰공고일시범위 종료 : <input type="date" name="end" id="end"> 
+        <div style="margin-right:15px;"></div>
+        pageNum : <input type="number" name="n" id="n">
+        <div style="margin-right:15px;"></div>
+        <button type="submit" class="btn btn-outline-secondary" onclick="changeFn()">완료</button>
+        </div>
+    </form>
+    
+    <h3>결과</h3>
+    <this id ="result" style="font-weight: bold;"></this> 부터
+    <this id ="result2" style="font-weight: bold;"></this> 로 입력하셨습니다 <br>
+    53 칼럼을 불러올 수 있으나 간소화하여 나타내었습니다 <br>
+    모든 칼럼을 보기 위해서는 http://localhost:5000/add/detail 을 참조하십시오
+    
+    <span class="display-flex">
+    <table class="table table-success table-striped table-hover"  border="1" id="tb" >
+        <tr>
+            <th>입찰공고번호</th>
+            <th>입찰공고차수</th>
+            <th>참조공고번호</th>
+            <th>참조공고차수</th>
+            <th>지역제한여부</th>
+            <th>참가가능지역명</th>
+            <th>나라장터공고여부</th>
+            <th>입찰공고명</th>
+            <th>입찰공고상태명</th>
+            <th>입찰공고일자</th>
+            <th>입찰공고시각</th>
+            <th>업무구분명</th>
+            <th>입찰공고URL</th>
+        </tr>
+        </table>
+    </span>
+    </div>   
+
+    <script>// 데이터 받아오기
+        var value = localStorage.getItem('value');
+        var value2 = localStorage.getItem('value2');
+        var value3 = localStorage.getItem('value3');
+        var resultDiv2 = document.getElementById('result'); 
+        resultDiv2.innerHTML = value
+        var resultDiv3 = document.getElementById('result2'); 
+        resultDiv3.innerHTML = value2
+    </script>
+    <script>       
+        // ajax 사용하기 위해서는 jquery 위에 링크 걸어줘야한다
+        $.ajax({
+            method: "GET",
+            url: "http://apis.data.go.kr/1230000/PubDataOpnStdService/getDataSetOpnStdBidPblancInfo?",
+            // ajax 여기서는 디코딩된 키를 사용한다
+            // 인코딩이 안된 api 키를 사용해야함
+            data: { serviceKey:'AV3R/gAmU5N/l2MG1S7ssv3lk4u18kkjaY6W4nRP6ki1s8gTSWqHIlknAMmLjtisUlwKvFS6/TEob0ZCxZUvxA==',
+                    pageNo: value3, // 앞에서 받아온 value를 입력 // 'all'
+                    numOfRows: '100',
+                    type: 'json',
+                    dtype:'1',
+                    bidNtceBgnDt: value,
+                    bidNtceEndDt: value2}
+            })
+            //.....
+            .done(function( msg ) {
+                //console.log('데이터 갯수: ' + msg['items']);
+                console.log(msg);
+                console.log(msg.response.body.items[0]);
+
+                var data = msg.response.body.items;
+
+                for (let i = 0; i < data.length; i++) {
+                    var thtag = document.createElement("th");	
+		            thtag.innerHTML = i;
+                    
+                    var td1 = document.createElement("td");
+                    td1.innerText = data[i]['bidNtceNo'];                    
+                    var td2 = document.createElement("td");
+                    td2.innerText = data[i]['bidNtceOrd'];                    
+                    var td3 = document.createElement("td");
+                    td3.innerText = data[i]['refNtceNo'];
+                    var td4 = document.createElement("td");
+                    td4.innerText = data[i]['refNtceOrd'];                    
+                    var td5 = document.createElement("td");
+                    td5.innerText = data[i]['ppsNtceYn'];                    
+                    var td6 = document.createElement("td");
+                    td6.innerText = data[i]['bidNtceNm'];
+                    var td7 = document.createElement("td");
+                    td7.innerText = data[i]['bidNtceSttusNm'];                    
+                    var td8 = document.createElement("td");
+                    td8.innerText = data[i]['bidNtceDate'];                    
+                    var td9 = document.createElement("td");
+                    td9.innerText = data[i]['bidNtceBgn'];
+                    var td10 = document.createElement("td");
+                    td10.innerText = data[i]['bsnsDivNm'];                    
+                                                
+                    var td18 = document.createElement("td");
+                    td18.innerText = data[i]['rgnLmtYn']; 
+                    var td19 = document.createElement("td");
+                    td19.innerText = data[i]['prtcptPsblRgnNm'];
+                    var td20 = document.createElement("td");
+                    td20.innerText = data[i]['bidNtceUrl'];                   
+                    
+
+                    var trtag = document.createElement("tr");
+                    //trtag.appendChild(thtag);
+                    trtag.appendChild(td1);
+                    trtag.appendChild(td2);
+                    trtag.appendChild(td3);
+                    trtag.appendChild(td4);
+                    trtag.appendChild(td18);
+                    trtag.appendChild(td19);
+                    trtag.appendChild(td5);
+                    trtag.appendChild(td6);
+                    trtag.appendChild(td7);
+                    trtag.appendChild(td8);
+                    trtag.appendChild(td9);
+                    trtag.appendChild(td10);
+                    trtag.appendChild(td20);
+
+                    var table = document.createElement("table");
+		            tb.appendChild(trtag);
+                }
+            });
+    </script>
+</body>
+</html>
