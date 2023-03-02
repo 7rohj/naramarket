@@ -10,12 +10,6 @@ app.get("/", (req,res) => {
 	res.sendFile(__dirname + '/index.html'); 
 	});
 
-app.post("/add", (req,res) => {  
+app.get("/add", (req,res) => {  
     res.sendFile(__dirname + '/add.html'); 
-    });
-
-app.post('/add', function(req, res){
-    console.log(req.body.str);
-    console.log(req.body.end);
-    res.send('전송완료')
     });
